@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Travel Gallery</title>
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --accent:#2b9bf4;
+      --muted:#6b7280;
+      --radius:12px;
+      --gap:18px;
+      --shadow: 0 8px 24px rgba(13,38,59,0.08);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:var(--bg);
+      color:#0f172a;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.4;
+    }
+
+    header{
+      background:linear-gradient(90deg,var(--accent), #2d7bd3);
+      color:white;
+      padding:28px 20px;
+      text-align:center;
+      box-shadow: 0 4px 16px rgba(43,155,244,0.14);
+    }
+    header h1{margin:0;font-size:1.6rem;letter-spacing:0.2px}
+    header p{margin:6px 0 0;font-size:0.95rem;opacity:0.95}
+
+    .wrap{
+      max-width:1080px;
+      margin:28px auto;
+      padding:0 18px 48px;
+    }
+
+    .intro{
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      align-items:center;
+      margin-bottom:18px;
+      flex-wrap:wrap;
+    }
+    .intro .text{
+      min-width:220px;
+    }
+    .intro h2{margin:0;font-size:1.15rem}
+    .intro p{margin:6px 0 0;color:var(--muted);font-size:0.95rem}
+
+    /* Gallery grid */
+    .gallery{
+      display:grid;
+      gap:var(--gap);
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+
+    .card{
+      background:var(--card);
+      border-radius:var(--radius);
+      overflow:hidden;
+      box-shadow:var(--shadow);
+      transition:transform .28s ease, box-shadow .28s ease;
+      display:flex;
+      flex-direction:column;
+    }
+    .card:focus-within,
+    .card:hover{ transform:translateY(-6px); box-shadow: 0 18px 40px rgba(13,38,59,0.12); }
+
+    .thumb{
+      position:relative;
+      width:100%;
+      padding-top:56%; /* 16:9-ish ratio */
+      overflow:hidden;
+      background:#e9eef7;
+    }
+    .thumb img{
+      position:absolute;
+      top:0; left:0; width:100%; height:100%; object-fit:cover;
+      display:block;
+      transition:transform .6s ease;
+    }
+    .card:hover .thumb img{ transform:scale(1.04); }
+
+    .content{
+      padding:14px 16px;
+    }
+    .content h3{margin:0 0 6px;font-size:1.03rem;}
+    .content p{margin:0 0 10px;color:var(--muted);font-size:0.95rem}
+
+    .badges{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:auto;
+    }
+    .badge{
+      font-size:0.85rem;
+      background:linear-gradient(180deg, #f3f8ff, #eef6ff);
+      color:#134e8a;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(19,78,138,0.06);
+    }
+
+    /* Lightbox modal (simple) */
+    .modal{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(7,12,20,0.6);
+      z-index:1000;
+      padding:20px;
+    }
+    .modal.open{ display:flex; }
+    .modal-content{
+      max-width:1100px;
+      width:100%;
+      border-radius:12px;
+      overflow:hidden;
+      background:var(--card);
+      box-shadow:0 24px 60px rgba(2,6,23,0.6);
+    }
+    .modal-img{
+      width:100%;
+      height:60vh;
+      background:#000;
+      display:block;
+      object-fit:cover;
+    }
+    .modal-footer{
+      padding:12px 16px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+    }
+    .close-btn{
+      background:#111827;
+      color:white;
+      border:none;
+      padding:8px 12px;
+      border-radius:8px;
+      cursor:pointer;
+    }
+
+    /* small screens */
+    @media (max-width:480px){
+      header h1{font-size:1.2rem}
+      .modal-img{height:50vh}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Travel Gallery</h1>
+    <p>Curated travel snapshots — click any image to view larger</p>
+  </header>
+
+  <main class="wrap" id="main">
+    <section class="intro" aria-labelledby="gallery-heading">
+      <div class="text">
+        <h2 id="gallery-heading">Favorites from the Road</h2>
+        <p>Three short travel stories with highlights. Images are sample Unsplash photos — replace with your own images if you prefer.</p>
+      </div>
+      <div class="meta" aria-hidden="true">
+        <small style="color:var(--muted)">3 destinations • responsive grid • lightbox</small>
+      </div>
+    </section>
+
+    <section class="gallery" aria-live="polite">
+      <!-- Card 1 -->
+      <article class="card" tabindex="0">
+        <button class="thumb" data-full="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=1600&q=80" aria-label="Open image: Paris, France">
+          <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=1000&q=60" alt="Eiffel Tower at dusk, Paris">
+        </button>
+        <div class="content">
+          <h3>Paris, France</h3>
+          <p>Romantic boulevards, cafés, and the iconic Eiffel Tower — a short stroll brings history and pastry together.</p>
+          <div class="badges" aria-hidden="true">
+            <span class="badge">Eiffel Tower</span>
+            <span class="badge">Louvre</span>
+            <span class="badge">Seine Walk</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 2 -->
+      <article class="card" tabindex="0">
+        <button class="thumb" data-full="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80" aria-label="Open image: Bali, Indonesia">
+          <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=60" alt="Tropical beach in Bali">
+        </button>
+        <div class="content">
+          <h3>Bali, Indonesia</h3>
+          <p>Tropical beaches, terraced rice fields and island culture — a spot for relaxation and exploration.</p>
+          <div class="badges" aria-hidden="true">
+            <span class="badge">Seminyak</span>
+            <span class="badge">Ubud</span>
+            <span class="badge">Balinese Dance</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 3 -->
+      <article class="card" tabindex="0">
+        <button class="thumb" data-full="newyork.jpeg" aria-label="Open image: New York, USA">
+          <img src="newyork.jpeg" alt="Times Square at night">
+        </button>
+        <div class="content">
+          <h3>New York, USA</h3>
+          <p>The city that never sleeps — bright lights, Broadway shows and unlimited things to do.</p>
+          <div class="badges" aria-hidden="true">
+            <span class="badge">Times Square</span>
+            <span class="badge">Central Park</span>
+            <span class="badge">Broadway</span>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <!-- Modal / Lightbox -->
+  <div id="lightbox" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-content" role="document">
+      <img id="lightbox-img" class="modal-img" src="" alt="">
+      <div class="modal-footer">
+        <div id="img-caption" style="color:var(--muted); font-size:0.95rem"></div>
+        <div>
+          <button id="closeBtn" class="close-btn" aria-label="Close">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Simple lightbox implementation
+    const lightbox = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightbox-img');
+    const caption = document.getElementById('img-caption');
+    const closeBtn = document.getElementById('closeBtn');
+
+    // Open when any .thumb button is clicked
+    document.querySelectorAll('.thumb').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const full = btn.dataset.full;
+        const alt = btn.querySelector('img').alt || '';
+        lbImg.src = full;
+        lbImg.alt = alt;
+        caption.textContent = alt;
+        lightbox.classList.add('open');
+        lightbox.setAttribute('aria-hidden', 'false');
+        closeBtn.focus();
+      });
+
+      // Allow keyboard Enter to open when card focused and Enter pressed
+      btn.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') btn.click();
+      });
+    });
+
+    function closeLightbox(){
+      lightbox.classList.remove('open');
+      lightbox.setAttribute('aria-hidden', 'true');
+      lbImg.src = '';
+      lbImg.alt = '';
+    }
+
+    closeBtn.addEventListener('click', closeLightbox);
+
+    // Close on background click
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox();
+    });
+  </script>
+</body>
+</html>
+
